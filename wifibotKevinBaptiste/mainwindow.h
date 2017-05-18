@@ -25,7 +25,7 @@ private slots:
     void hello();
 
 
-
+    void cameraAction();
     void mouve_up();
     void mouve_back();
     void mouve_left();
