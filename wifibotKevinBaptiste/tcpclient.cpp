@@ -1,5 +1,6 @@
 #include "tcpclient.h"
 #include <unistd.h>
+#include <math.h>
 
 TCPClient::TCPClient(QString IP, int port)
 {
@@ -22,14 +23,27 @@ void TCPClient::getData()
 {
     //We the client receives data
     QByteArray data = this->socket->readAll();
-    std::cout << "data found" << std::endl;
-    for(int i = 0 ; i<=data.size()-1; i++)
+    char readableData[168];
+    for(int i = 0 ; i<data.count(); i++)
     {
         char b = data.at(i);
-        for(int j=7; j>=0; --j)
+
+        for(int j=7; j>=0; j--)
         {
-            std::cout << ((b >> j) & 1);
+            readableData[7-j+i*8] = ((b >> j) & 1) ? '1' : '0';
+            std::cout << readableData[7-j+i*8];
         }
+    }
+    std::cout << std::endl;
+    for(int i=0; i<168; i+=8)
+    {
+        // We assume that the maximum battery the bot can have is set to 183
+        int toDecimal = 0;
+        for(int k=7; k>=0; k--)
+        {
+            toDecimal += (readableData[i+k]-'0')*pow(2,k);
+        }
+        std::cout << toDecimal << " ";
     }
     std::cout << std::endl;
 }
@@ -66,6 +80,10 @@ void TCPClient::connectionEstablished()
     std::cout << "Connection successfully established" << std::endl;
     this->isConnected = true;
     emit reportConnection("Status : connected");
+
+    char init[4] = {'i','n','i','t'};
+    this->socket->write(init, 4*sizeof(char));
+
     this->timer = new QTimer(this);
     connect(this->timer, SIGNAL(timeout()), this, SLOT(synchroniseBot()));
     timer->setSingleShot(false);
@@ -84,8 +102,8 @@ void TCPClient::onError()
 void TCPClient::synchroniseBot()
 {
     // Refreshes the connection with an empty frame
-    int i = 255;
-    this->socket->write((const char*) &i, sizeof(i));
+    char refresh[4] = {'d','a','t','a'};
+    this->socket->write(refresh, 4*sizeof(char));
 }
 
 void TCPClient::setNewIP(QString ip)
