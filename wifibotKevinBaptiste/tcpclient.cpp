@@ -1,4 +1,5 @@
 #include "tcpclient.h"
+#include <unistd.h>
 
 TCPClient::TCPClient(QString IP, int port)
 {
@@ -20,7 +21,17 @@ void TCPClient::setup(QString IP, int port)
 void TCPClient::getData()
 {
     //We the client receives data
-    std::cout << "Ready to read !" << std::endl;
+    QByteArray data = this->socket->readAll();
+    std::cout << "data found" << std::endl;
+    for(int i = 0 ; i<=data.size()-1; i++)
+    {
+        char b = data.at(i);
+        for(int j=7; j>=0; --j)
+        {
+            std::cout << ((b >> j) & 1);
+        }
+    }
+    std::cout << std::endl;
 }
 
 void TCPClient::connectToBot()
@@ -46,6 +57,7 @@ void TCPClient::onDisconnection()
     std::cout << "Disconnected" << std::endl;
     this->isConnected = false;
     emit reportConnection("Status : disconnected");
+    timer->stop();
 }
 
 void TCPClient::connectionEstablished()
@@ -54,15 +66,26 @@ void TCPClient::connectionEstablished()
     std::cout << "Connection successfully established" << std::endl;
     this->isConnected = true;
     emit reportConnection("Status : connected");
+    this->timer = new QTimer(this);
+    connect(this->timer, SIGNAL(timeout()), this, SLOT(synchroniseBot()));
+    timer->setSingleShot(false);
+    timer->start(500);
 }
 
 void TCPClient::onError()
 {
-    emit reportConnection("Status : Failed last action");
-    Error *winError = new Error("Error. Either the IPv4 address is invalid or the device is unaivailable at the moment.");
+    emit reportConnection("Status : Error");
+    Error *winError = new Error(this->socket->errorString());
     winError->exec();
     winError = NULL;
     free(winError);
+}
+
+void TCPClient::synchroniseBot()
+{
+    // Refreshes the connection with an empty frame
+    int i = 255;
+    this->socket->write((const char*) &i, sizeof(i));
 }
 
 void TCPClient::setNewIP(QString ip)

@@ -1,6 +1,7 @@
 #include <QTcpSocket>
 #include <iostream>
 #include "error.h"
+#include <QTimer>
 
 #ifndef TCPCLIENT_H
 #define TCPCLIENT_H
@@ -10,7 +11,7 @@ class TCPClient : public QObject
 {
 Q_OBJECT
 public:
-    TCPClient(QString IP="192.168.1.106", int port=8080);
+    TCPClient(QString IP="192.168.1.106", int port=15020);
     int getRobotPort(){
         return this->wifibotPort;
     }
@@ -29,7 +30,7 @@ signals:
     void reportConnection(QString status);
 private:
     void setup(QString IP, int port);
-
+    QTimer* timer;
     QString wifibotIP;
     int wifibotPort;
     QTcpSocket *socket;
@@ -39,6 +40,7 @@ private slots:
     void getData();
     void onDisconnection();
     void onError();
+    void synchroniseBot();
 };
 
 #endif // TCPCLIENT_H
