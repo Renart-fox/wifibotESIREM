@@ -27,7 +27,7 @@ private slots:
 
 
     void mouve_up();
-    void mouve_down();
+    void mouve_back();
     void mouve_left();
     void mouve_right();
 

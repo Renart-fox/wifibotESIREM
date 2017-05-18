@@ -11,17 +11,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->robotIPPort->setText(robotConnectionData);
 
 
-    connect(ui->up, SIGNAL (pressed()), this, SLOT (mouve_up()));
-    ui->up->setAutoRepeat(true);
+    connect(ui->button_up, SIGNAL (pressed()), this, SLOT (mouve_up()));
+    ui->button_up->setAutoRepeat(true);
 
-    connect(ui->up, SIGNAL (pressed()), this, SLOT (mouve_down()));
-    ui->up->setAutoRepeat(true);
+    connect(ui->button_back, SIGNAL (pressed()), this, SLOT (mouve_back()));
+    ui->button_back->setAutoRepeat(true);
 
-    connect(ui->up, SIGNAL (pressed()), this, SLOT (mouve_up()));
-    ui->up->setAutoRepeat(true);
+    connect(ui->button_right, SIGNAL (pressed()), this, SLOT (mouve_right()));
+    ui->button_right->setAutoRepeat(true);
 
-    connect(ui->up, SIGNAL (pressed()), this, SLOT (mouve_up()));
-    ui->up->setAutoRepeat(true);
+    connect(ui->button_left, SIGNAL (pressed()), this, SLOT (mouve_left()));
+    ui->button_left->setAutoRepeat(true);
+
     initSignals();
 }
 
@@ -86,4 +87,19 @@ void MainWindow::hello()
 void MainWindow::mouve_up()
 {
    qDebug() << "up pressed";
+}
+
+void MainWindow::mouve_back()
+{
+   qDebug() << "back pressed";
+}
+
+void MainWindow::mouve_right()
+{
+   qDebug() << "right pressed";
+}
+
+void MainWindow::mouve_left()
+{
+   qDebug() << "left pressed";
 }
