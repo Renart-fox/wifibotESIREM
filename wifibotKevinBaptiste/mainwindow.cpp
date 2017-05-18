@@ -6,8 +6,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    client = new TCPClient();
-    QString robotConnectionData = client->getRobotIP() + ":" + QString::number(client->getRobotPort());
+    tcpclient = new TCPClient();
+    QString robotConnectionData = tcpclient->getRobotIP() + ":" + QString::number(tcpclient->getRobotPort());
     ui->robotIPPort->setText(robotConnectionData);
 
     initSignals();
@@ -16,7 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::initSignals()
 {
     connect(ui->connectionButton, SIGNAL (released()), this, SLOT (pushAction()));
-    connect(this->client, SIGNAL(reportConnection(QString)), this, SLOT(changeConnectionStatus(QString)));
+    connect(this->tcpclient, SIGNAL(reportConnection(QString)), this, SLOT(changeConnectionStatus(QString)));
+    connect(this->ui->actionChange_IPv4, SIGNAL(triggered(bool)), this, SLOT(hello()));
 }
 
 MainWindow::~MainWindow()
@@ -26,26 +27,42 @@ MainWindow::~MainWindow()
 
 void MainWindow::pushAction()
 {
-    if(isConnected)
+    if(this->tcpclient->getConnectionStatus())
     {
-        client->disconnectFromBot();
+        tcpclient->disconnectFromBot();
     }
     else
     {
-        client->connectToBot();
+        tcpclient->connectToBot();
+        ui->actionChange_IPv4->setEnabled(false);
     }
 }
 
 void MainWindow::changeConnectionStatus(QString status)
 {
     this->ui->connectionStatus->setText(status);
-    isConnected = !isConnected;
-    if(!isConnected)
+    if(!this->tcpclient->getConnectionStatus())
     {
         ui->connectionButton->setText("Connect to bot");
+        ui->actionChange_IPv4->setEnabled(true);
     }
     else
     {
         ui->connectionButton->setText("Disconnect from bot");
+        ui->actionChange_IPv4->setEnabled(false);
     }
+}
+
+void MainWindow::hello()
+{
+    changeIP* ip = new changeIP(this);
+    int accepted = ip->exec();
+    if(accepted == QDialog::Accepted)
+    {
+        this->tcpclient->setNewIP(ip->getNewIP());
+        QString robotConnectionData = tcpclient->getRobotIP() + ":" + QString::number(tcpclient->getRobotPort());
+        ui->robotIPPort->setText(robotConnectionData);
+    }
+    ip = NULL;
+    free(ip);
 }

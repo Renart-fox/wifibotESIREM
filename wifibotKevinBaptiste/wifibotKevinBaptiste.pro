@@ -15,9 +15,17 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    tcpclient.cpp
+    tcpclient.cpp \
+    error.cpp \
+    changeip.cpp \
+    udpclient.cpp
 
 HEADERS  += mainwindow.h \
-    tcpclient.h
+    tcpclient.h \
+    error.h \
+    changeip.h \
+    udpclient.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    error.ui \
+    changeip.ui

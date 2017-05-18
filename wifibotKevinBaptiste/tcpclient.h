@@ -1,5 +1,6 @@
 #include <QTcpSocket>
 #include <iostream>
+#include "error.h"
 
 #ifndef TCPCLIENT_H
 #define TCPCLIENT_H
@@ -16,6 +17,12 @@ public:
     QString getRobotIP(){
         return this->wifibotIP;
     }
+    bool getConnectionStatus(){
+        return this->isConnected;
+    }
+
+    void setNewIP(QString ip);
+
     void connectToBot();
     void disconnectFromBot();
 signals:
@@ -31,6 +38,7 @@ private slots:
     void connectionEstablished();
     void getData();
     void onDisconnection();
+    void onError();
 };
 
 #endif // TCPCLIENT_H

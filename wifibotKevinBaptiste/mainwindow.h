@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 #include "tcpclient.h"
+#include "udpclient.h"
+#include "error.h"
+#include "changeip.h"
 
 namespace Ui {
 class MainWindow;
@@ -19,10 +22,11 @@ public:
 private slots:
     void pushAction();
     void changeConnectionStatus(QString status);
+    void hello();
 private:
     Ui::MainWindow *ui;
-    TCPClient *client;
-    bool isConnected = false;
+    TCPClient *tcpclient;
+    UDPClient *udpclient;
 };
 
 #endif // MAINWINDOW_H
