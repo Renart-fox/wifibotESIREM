@@ -10,6 +10,18 @@ MainWindow::MainWindow(QWidget *parent) :
     QString robotConnectionData = tcpclient->getRobotIP() + ":" + QString::number(tcpclient->getRobotPort());
     ui->robotIPPort->setText(robotConnectionData);
 
+
+    connect(ui->up, SIGNAL (pressed()), this, SLOT (mouve_up()));
+    ui->up->setAutoRepeat(true);
+
+    connect(ui->up, SIGNAL (pressed()), this, SLOT (mouve_down()));
+    ui->up->setAutoRepeat(true);
+
+    connect(ui->up, SIGNAL (pressed()), this, SLOT (mouve_up()));
+    ui->up->setAutoRepeat(true);
+
+    connect(ui->up, SIGNAL (pressed()), this, SLOT (mouve_up()));
+    ui->up->setAutoRepeat(true);
     initSignals();
 }
 
@@ -65,4 +77,13 @@ void MainWindow::hello()
     }
     ip = NULL;
     free(ip);
+}
+
+
+
+
+
+void MainWindow::mouve_up()
+{
+   qDebug() << "up pressed";
 }

@@ -23,6 +23,16 @@ private slots:
     void pushAction();
     void changeConnectionStatus(QString status);
     void hello();
+
+
+
+    void mouve_up();
+    void mouve_down();
+    void mouve_left();
+    void mouve_right();
+
+
+
 private:
     Ui::MainWindow *ui;
     TCPClient *tcpclient;
