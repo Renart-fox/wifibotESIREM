@@ -8,11 +8,11 @@ class UDPClient : public QObject
 {
 Q_OBJECT
 public:
-    UDPClient(QString IP="192.168.1.106", int port=15000);
+    UDPClient(QString IP="192.168.1.106", int port=8080);
 
-    void readPendingDatagrams();
+
     void processTheDatagram(QNetworkDatagram datagram);
-
+    void connectToCam();
 private:
 
     void setup(QString IP, int port);
@@ -22,6 +22,7 @@ private:
 
 private slots:
     void connectionEstablished();
+    void readPendingDatagrams();
 };
 
 #endif // UDPCLIENT_H
