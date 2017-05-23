@@ -30,6 +30,7 @@ private slots:
     void mouve_back();
     void mouve_left();
     void mouve_right();
+    void stop();
 
 
 
@@ -37,6 +38,8 @@ private:
     Ui::MainWindow *ui;
     TCPClient *tcpclient;
     UDPClient *udpclient;
+    QSet<int> pressedKey;
+    bool eventFilter(QObject *watched, QEvent *event);
 };
 
 #endif // MAINWINDOW_H

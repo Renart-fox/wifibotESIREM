@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QKeyEvent>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -9,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent) :
     tcpclient = new TCPClient();
     QString robotConnectionData = tcpclient->getRobotIP() + ":" + QString::number(tcpclient->getRobotPort());
     ui->robotIPPort->setText(robotConnectionData);
+
+    this->installEventFilter(this);
 
     initSignals();
 }
@@ -24,16 +27,16 @@ void MainWindow::initSignals()
 
     //changement de direction
         connect(ui->button_up, SIGNAL (pressed()), this, SLOT (mouve_up()));
-        ui->button_up->setAutoRepeat(true);
+        connect(ui->button_up, SIGNAL(released()), this, SLOT (stop()));
 
         connect(ui->button_back, SIGNAL (pressed()), this, SLOT (mouve_back()));
-        ui->button_back->setAutoRepeat(true);
+        connect(ui->button_back, SIGNAL(released()), this, SLOT (stop()));
 
         connect(ui->button_right, SIGNAL (pressed()), this, SLOT (mouve_right()));
-        ui->button_right->setAutoRepeat(true);
+        connect(ui->button_right, SIGNAL(released()), this, SLOT (stop()));
 
         connect(ui->button_left, SIGNAL (pressed()), this, SLOT (mouve_left()));
-        ui->button_left->setAutoRepeat(true);
+        connect(ui->button_left, SIGNAL(released()), this, SLOT (stop()));
 }
 
 MainWindow::~MainWindow()
@@ -92,20 +95,71 @@ void MainWindow::cameraAction()
 
 void MainWindow::mouve_up()
 {
-   qDebug() << "up pressed";
+   this->tcpclient->move('u');
 }
 
 void MainWindow::mouve_back()
 {
-   qDebug() << "back pressed";
+   this->tcpclient->move('d');
 }
 
 void MainWindow::mouve_right()
 {
-   qDebug() << "right pressed";
+   this->tcpclient->move('r');
 }
 
 void MainWindow::mouve_left()
 {
-   qDebug() << "left pressed";
+   this->tcpclient->move('l');
+}
+
+void MainWindow::stop()
+{
+    this->tcpclient->move('s');
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if(event->type()==QEvent::KeyPress)
+    {
+        pressedKey += ((QKeyEvent*)event)->key();
+        if(pressedKey.contains(Qt::Key_Z) && pressedKey.contains(Qt::Key_Q))
+        {
+            this->tcpclient->move('g');
+        }
+        else if(pressedKey.contains(Qt::Key_Z) && pressedKey.contains(Qt::Key_D))
+        {
+            this->tcpclient->move('h');
+        }
+        else if(pressedKey.contains(Qt::Key_Z))
+        {
+            this->tcpclient->move('u');
+        }
+        else if(pressedKey.contains(Qt::Key_S) && pressedKey.contains(Qt::Key_Q))
+        {
+            this->tcpclient->move('b');
+        }
+        else if(pressedKey.contains(Qt::Key_S) && pressedKey.contains(Qt::Key_D))
+        {
+            this->tcpclient->move('n');
+        }
+        else if(pressedKey.contains(Qt::Key_S))
+        {
+            this->tcpclient->move('d');
+        }
+        else if(pressedKey.contains(Qt::Key_D))
+        {
+            this->tcpclient->move('r');
+        }
+        else if(pressedKey.contains(Qt::Key_Q))
+        {
+            this->tcpclient->move('l');
+        }
+    }
+
+    if(event->type()==QEvent::KeyRelease)
+    {
+        pressedKey -= ((QKeyEvent*)event)->key();
+        stop();
+    }
 }

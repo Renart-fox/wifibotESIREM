@@ -38,6 +38,7 @@ private:
     int wifibotPort;
     QTcpSocket *socket;
     bool isConnected = false;
+    char lastDirection = 'n';
 private slots:
     void connectionEstablished();
     void getData();

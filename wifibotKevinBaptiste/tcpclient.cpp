@@ -106,59 +106,82 @@ void TCPClient::synchroniseBot()
     // Refreshes the connection with an empty frame
     QByteArray data;
     data.append(255);
-    data.append(0x07);
-    data.append((char)0xf0);
-    data.append((char)0x00);
-    data.append((char)0x00);
-    data.append((char)0x00);
-    data.append((char)0x40);
-
-    qint16 crc = NETWORKINGOPT::crc16(data);
-
-    data.append((char)crc);
-    data.append((char)(crc >> 8));
 
     this->socket->write(data);
 }
 
 void TCPClient::move(char dir)
 {
-    QByteArray data;
-    data.append(255);
-    data.append(0x07);
-    switch(dir)
+    if(dir != lastDirection)
     {
-        case 'u': data.append((char)0x78);
-                data.append((char)0x00);
-                data.append((char)0x78);
-                data.append((char)0x00);
-                data.append((char)0x50);
-            break;
-        case 'd': data.append((char)0x78);
-                data.append((char)0x00);
-                data.append((char)0x78);
-                data.append((char)0x00);
-                data.append((char)0x00);
-            break;
-        case 'l': data.append((char)0x00);
-                data.append((char)0x00);
-                data.append((char)0xf0);
-                data.append((char)0x00);
-                data.append((char)0x10);
-            break;
-        case 'r': data.append((char)0xf0);
-                data.append((char)0x00);
-                data.append((char)0x00);
-                data.append((char)0x00);
-                data.append((char)0x40);
-            break;
-        default: std::cout << "No direction assigned to input" << std::endl;
-    }
-    qint16 crc = NETWORKINGOPT::crc16(data);
-    data.append((char)crc);
-    data.append((char)(crc >> 8));
+        lastDirection = dir;
 
-    this->socket->write(data);
+        QByteArray data;
+        data.append(255);
+        data.append(0x07);
+        switch(dir)
+        {
+            case 'u': data.append((char)0x78);
+                    data.append((char)0x00);
+                    data.append((char)0x78);
+                    data.append((char)0x00);
+                    data.append((char)0x50);
+                break;
+            case 'd': data.append((char)0x78);
+                    data.append((char)0x00);
+                    data.append((char)0x78);
+                    data.append((char)0x00);
+                    data.append((char)0x00);
+                break;
+            case 'l': data.append((char)0x00);
+                    data.append((char)0x00);
+                    data.append((char)0xf0);
+                    data.append((char)0x00);
+                    data.append((char)0x10);
+                break;
+            case 'r': data.append((char)0xf0);
+                    data.append((char)0x00);
+                    data.append((char)0x00);
+                    data.append((char)0x00);
+                    data.append((char)0x40);
+                break;
+            case 'g': data.append((char)0x78);
+                    data.append((char)0x00);
+                    data.append((char)0xf0);
+                    data.append((char)0x00);
+                    data.append((char)0x50);
+                break;
+            case 'h': data.append((char)0xf0);
+                    data.append((char)0x00);
+                    data.append((char)0x78);
+                    data.append((char)0x00);
+                    data.append((char)0x50);
+                break;
+            case 'b': data.append((char)0x78);
+                    data.append((char)0x00);
+                    data.append((char)0xf0);
+                    data.append((char)0x00);
+                    data.append((char)0x00);
+                break;
+            case 'n': data.append((char)0xf0);
+                    data.append((char)0x00);
+                    data.append((char)0x78);
+                    data.append((char)0x00);
+                    data.append((char)0x00);
+                break;
+            case 's': data.append((char)0x00);
+            data.append((char)0x00);
+            data.append((char)0x00);
+            data.append((char)0x00);
+            data.append((char)0x50);
+                break;
+        }
+        qint16 crc = NETWORKINGOPT::crc16(data);
+        data.append((char)crc);
+        data.append((char)(crc >> 8));
+
+        this->socket->write(data);
+    }
 }
 
 void TCPClient::setNewIP(QString ip)
