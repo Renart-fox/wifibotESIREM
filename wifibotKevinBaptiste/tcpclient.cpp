@@ -23,27 +23,29 @@ void TCPClient::getData()
 {
     //We the client receives data
     QByteArray data = this->socket->readAll();
-    char readableData[168];
+    int readableData[168];
     for(int i = 0 ; i<data.count(); i++)
     {
         char b = data.at(i);
 
         for(int j=7; j>=0; j--)
         {
-            readableData[7-j+i*8] = ((b >> j) & 1) ? '1' : '0';
+            readableData[7-j+i*8] = ((b >> j) & 1) ? 1 : 0;
             std::cout << readableData[7-j+i*8];
         }
     }
     std::cout << std::endl;
+
+    int toDec = 0;
     for(int i=0; i<168; i+=8)
     {
-        // We assume that the maximum battery the bot can have is set to 183
-        int toDecimal = 0;
-        for(int k=7; k>=0; k--)
+        for(int j=0; j<8; j++)
         {
-            toDecimal += (readableData[i+k]-'0')*pow(2,k);
+            toDec += readableData[i+j] * pow(2, 7-j);
         }
-        std::cout << toDecimal << " ";
+
+        std::cout << toDec << " ";
+        toDec = 0;
     }
     std::cout << std::endl;
 }
@@ -87,7 +89,7 @@ void TCPClient::connectionEstablished()
     this->timer = new QTimer(this);
     connect(this->timer, SIGNAL(timeout()), this, SLOT(synchroniseBot()));
     timer->setSingleShot(false);
-    timer->start(500);
+    timer->start(1000);
 }
 
 void TCPClient::onError()
@@ -102,8 +104,61 @@ void TCPClient::onError()
 void TCPClient::synchroniseBot()
 {
     // Refreshes the connection with an empty frame
-    char refresh[4] = {'d','a','t','a'};
-    this->socket->write(refresh, 4*sizeof(char));
+    QByteArray data;
+    data.append(255);
+    data.append(0x07);
+    data.append((char)0xf0);
+    data.append((char)0x00);
+    data.append((char)0x00);
+    data.append((char)0x00);
+    data.append((char)0x40);
+
+    qint16 crc = NETWORKINGOPT::crc16(data);
+
+    data.append((char)crc);
+    data.append((char)(crc >> 8));
+
+    this->socket->write(data);
+}
+
+void TCPClient::move(char dir)
+{
+    QByteArray data;
+    data.append(255);
+    data.append(0x07);
+    switch(dir)
+    {
+        case 'u': data.append((char)0x78);
+                data.append((char)0x00);
+                data.append((char)0x78);
+                data.append((char)0x00);
+                data.append((char)0x50);
+            break;
+        case 'd': data.append((char)0x78);
+                data.append((char)0x00);
+                data.append((char)0x78);
+                data.append((char)0x00);
+                data.append((char)0x00);
+            break;
+        case 'l': data.append((char)0x00);
+                data.append((char)0x00);
+                data.append((char)0xf0);
+                data.append((char)0x00);
+                data.append((char)0x10);
+            break;
+        case 'r': data.append((char)0xf0);
+                data.append((char)0x00);
+                data.append((char)0x00);
+                data.append((char)0x00);
+                data.append((char)0x40);
+            break;
+        default: std::cout << "No direction assigned to input" << std::endl;
+    }
+    qint16 crc = NETWORKINGOPT::crc16(data);
+    data.append((char)crc);
+    data.append((char)(crc >> 8));
+
+    this->socket->write(data);
 }
 
 void TCPClient::setNewIP(QString ip)

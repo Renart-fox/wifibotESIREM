@@ -2,6 +2,7 @@
 #include <iostream>
 #include "error.h"
 #include <QTimer>
+#include "networkingopt.h"
 
 #ifndef TCPCLIENT_H
 #define TCPCLIENT_H
@@ -23,6 +24,8 @@ public:
     }
 
     void setNewIP(QString ip);
+
+    void move(char dir);
 
     void connectToBot();
     void disconnectFromBot();
