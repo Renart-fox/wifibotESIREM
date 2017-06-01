@@ -43,6 +43,18 @@ void MainWindow::initSignals()
         connect(ui->button_left, SIGNAL (pressed()), this, SLOT (move_Rleft()));
         connect(ui->button_left, SIGNAL(released()), this, SLOT (stop()));
 
+        connect(ui->button_ul, SIGNAL (pressed()), this, SLOT (move_Rul()));
+        connect(ui->button_ul, SIGNAL(released()), this, SLOT (stop()));
+
+        connect(ui->button_ur, SIGNAL (pressed()), this, SLOT (move_Rur()));
+        connect(ui->button_ur, SIGNAL(released()), this, SLOT (stop()));
+
+        connect(ui->button_dl, SIGNAL (pressed()), this, SLOT (move_Rdl()));
+        connect(ui->button_dl, SIGNAL(released()), this, SLOT (stop()));
+
+        connect(ui->button_dr, SIGNAL (pressed()), this, SLOT (move_Rdr()));
+        connect(ui->button_dr, SIGNAL(released()), this, SLOT (stop()));
+
 }
 
 MainWindow::~MainWindow()
@@ -122,6 +134,25 @@ void MainWindow::move_Rleft()
    this->tcpclient->move('l');
 }
 
+void MainWindow::move_Rul()
+{
+   this->tcpclient->move('g');
+}
+
+void MainWindow::move_Rur()
+{
+   this->tcpclient->move('h');
+}
+
+void MainWindow::move_Rdl()
+{
+   this->tcpclient->move('b');
+}
+
+void MainWindow::move_Rdr()
+{
+   this->tcpclient->move('n');
+}
 void MainWindow::stop()
 {
     this->tcpclient->move('s');

@@ -31,6 +31,10 @@ private slots:
     void move_Rback();
     void move_Rleft();
     void move_Rright();
+    void move_Rul();
+    void move_Rur();
+    void move_Rdl();
+    void move_Rdr();
     void move_Cup();
     void move_Cdown();
     void move_Cleft();

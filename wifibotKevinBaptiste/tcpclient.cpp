@@ -112,76 +112,87 @@ void TCPClient::synchroniseBot()
 
 void TCPClient::move(char dir)
 {
-    if(dir != lastDirection)
+    if(this->isConnected)
     {
-        lastDirection = dir;
-
-        QByteArray data;
-        data.append(255);
-        data.append(0x07);
-        switch(dir)
+        if(dir != lastDirection)
         {
-            case 'u': data.append((char)0x78);
-                    data.append((char)0x00);
-                    data.append((char)0x78);
-                    data.append((char)0x00);
-                    data.append((char)0x50);
-                break;
-            case 'd': data.append((char)0x78);
-                    data.append((char)0x00);
-                    data.append((char)0x78);
-                    data.append((char)0x00);
-                    data.append((char)0x00);
-                break;
-            case 'l': data.append((char)0x00);
-                    data.append((char)0x00);
-                    data.append((char)0xf0);
-                    data.append((char)0x00);
-                    data.append((char)0x10);
-                break;
-            case 'r': data.append((char)0xf0);
-                    data.append((char)0x00);
-                    data.append((char)0x00);
-                    data.append((char)0x00);
-                    data.append((char)0x40);
-                break;
-            case 'g': data.append((char)0x78);
-                    data.append((char)0x00);
-                    data.append((char)0xf0);
-                    data.append((char)0x00);
-                    data.append((char)0x50);
-                break;
-            case 'h': data.append((char)0xf0);
-                    data.append((char)0x00);
-                    data.append((char)0x78);
-                    data.append((char)0x00);
-                    data.append((char)0x50);
-                break;
-            case 'b': data.append((char)0x78);
-                    data.append((char)0x00);
-                    data.append((char)0xf0);
-                    data.append((char)0x00);
-                    data.append((char)0x00);
-                break;
-            case 'n': data.append((char)0xf0);
-                    data.append((char)0x00);
-                    data.append((char)0x78);
-                    data.append((char)0x00);
-                    data.append((char)0x00);
-                break;
-            case 's': data.append((char)0x00);
-            data.append((char)0x00);
-            data.append((char)0x00);
-            data.append((char)0x00);
-            data.append((char)0x50);
-                break;
-        }
-        qint16 crc = NETWORKINGOPT::crc16(data);
-        data.append((char)crc);
-        data.append((char)(crc >> 8));
+            lastDirection = dir;
 
-        this->socket->write(data);
+            QByteArray data;
+            data.append(255);
+            data.append(0x07);
+            switch(dir)
+            {
+                case 'u': data.append((char)0x78);
+                        data.append((char)0x00);
+                        data.append((char)0x78);
+                        data.append((char)0x00);
+                        data.append((char)0x50);
+                    break;
+                case 'd': data.append((char)0x78);
+                        data.append((char)0x00);
+                        data.append((char)0x78);
+                        data.append((char)0x00);
+                        data.append((char)0x00);
+                    break;
+                case 'l': data.append((char)0x00);
+                        data.append((char)0x00);
+                        data.append((char)0xf0);
+                        data.append((char)0x00);
+                        data.append((char)0x10);
+                    break;
+                case 'r': data.append((char)0xf0);
+                        data.append((char)0x00);
+                        data.append((char)0x00);
+                        data.append((char)0x00);
+                        data.append((char)0x40);
+                    break;
+                case 'g': data.append((char)0x78);
+                        data.append((char)0x00);
+                        data.append((char)0xf0);
+                        data.append((char)0x00);
+                        data.append((char)0x50);
+                    break;
+                case 'h': data.append((char)0xf0);
+                        data.append((char)0x00);
+                        data.append((char)0x78);
+                        data.append((char)0x00);
+                        data.append((char)0x50);
+                    break;
+                case 'b': data.append((char)0x78);
+                        data.append((char)0x00);
+                        data.append((char)0xf0);
+                        data.append((char)0x00);
+                        data.append((char)0x00);
+                    break;
+                case 'n': data.append((char)0xf0);
+                        data.append((char)0x00);
+                        data.append((char)0x78);
+                        data.append((char)0x00);
+                        data.append((char)0x00);
+                    break;
+                case 's': data.append((char)0x00);
+                data.append((char)0x00);
+                data.append((char)0x00);
+                data.append((char)0x00);
+                data.append((char)0x50);
+                    break;
+            }
+            qint16 crc = NETWORKINGOPT::crc16(data);
+            data.append((char)crc);
+            data.append((char)(crc >> 8));
+
+            this->socket->write(data);
+        }
     }
+    else
+    {
+        Error* e = new Error("Tried to move when robot is not connected.");
+        e->exec();
+        e=NULL;
+        free(e);
+    }
+
 }
 
 void TCPClient::setNewIP(QString ip)
