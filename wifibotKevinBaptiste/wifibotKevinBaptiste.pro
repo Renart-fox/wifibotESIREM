@@ -7,6 +7,7 @@
 QT       += core gui
 QT += network
 QMAKE_CXXFLAGS += -std=c++11
+QT += multimediawidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

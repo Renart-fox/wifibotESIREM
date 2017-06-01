@@ -2,6 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QVideoWidget>
+#include <QMediaPlayer>
+#include <QMediaPlaylist>
+#include <QUrl>
 #include "tcpclient.h"
 #include "udpclient.h"
 #include "error.h"
@@ -22,7 +26,7 @@ public:
 private slots:
     void pushAction();
     void changeConnectionStatus(QString status);
-    void hello();
+    void showIPWindow();
 
 
 

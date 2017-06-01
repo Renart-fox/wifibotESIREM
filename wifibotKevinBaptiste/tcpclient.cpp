@@ -37,14 +37,15 @@ void TCPClient::getData()
     std::cout << std::endl;
 
     int toDec = 0;
+    int frame[20];
     for(int i=0; i<168; i+=8)
     {
         for(int j=0; j<8; j++)
         {
             toDec += readableData[i+j] * pow(2, 7-j);
         }
-
-        std::cout << toDec << " ";
+        frame[i/8] = toDec;
+        std::cout << frame[i/8] << " ";
         toDec = 0;
     }
     std::cout << std::endl;
@@ -123,29 +124,29 @@ void TCPClient::move(char dir)
             data.append(0x07);
             switch(dir)
             {
-                case 'u': data.append((char)0x78);
+                case 'u': data.append((char)0xf0);
                         data.append((char)0x00);
-                        data.append((char)0x78);
+                        data.append((char)0xf0);
                         data.append((char)0x00);
                         data.append((char)0x50);
                     break;
-                case 'd': data.append((char)0x78);
-                        data.append((char)0x00);
-                        data.append((char)0x78);
-                        data.append((char)0x00);
-                        data.append((char)0x00);
-                    break;
-                case 'l': data.append((char)0x00);
+                case 'd': data.append((char)0xf0);
                         data.append((char)0x00);
                         data.append((char)0xf0);
                         data.append((char)0x00);
                         data.append((char)0x10);
                     break;
+                case 'l': data.append((char)0x60);
+                        data.append((char)0x00);
+                        data.append((char)0xf0);
+                        data.append((char)0x00);
+                        data.append((char)0x50);
+                    break;
                 case 'r': data.append((char)0xf0);
                         data.append((char)0x00);
+                        data.append((char)0x60);
                         data.append((char)0x00);
-                        data.append((char)0x00);
-                        data.append((char)0x40);
+                        data.append((char)0x50);
                     break;
                 case 'g': data.append((char)0x78);
                         data.append((char)0x00);
@@ -177,6 +178,11 @@ void TCPClient::move(char dir)
                 data.append((char)0x00);
                 data.append((char)0x50);
                     break;
+            default:
+                Error *e = new Error("Unrecognized direction ? Please contact the development team.");
+                e->exec();
+                e=NULL;
+                free(e);
             }
             qint16 crc = NETWORKINGOPT::crc16(data);
             data.append((char)crc);

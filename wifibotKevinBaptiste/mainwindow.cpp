@@ -16,6 +16,20 @@ MainWindow::MainWindow(QWidget *parent) :
     this->installEventFilter(this);
 
     initSignals();
+
+    QVideoWidget* videoWidget = new QVideoWidget();
+    videoWidget->setStyleSheet("background-color: black;");
+    this->ui->videoContainer->addWidget(videoWidget,0,0,0,0);
+    videoWidget->setFullScreen(false);
+    QMediaPlaylist* playlist = new QMediaPlaylist();
+    playlist->addMedia(QUrl("192.168.1.106:8080"));
+    QNetworkRequest* req = new QNetworkRequest(QUrl("192.168.1.106:8080"));
+    playlist->setCurrentIndex(1);
+    QMediaPlayer* player = new QMediaPlayer(playlist);
+    player->setVideoOutput(videoWidget);
+    videoWidget->show();
+
+    player->play();
 }
 
 void MainWindow::initSignals()
@@ -27,7 +41,7 @@ void MainWindow::initSignals()
 
     connect(this->tcpclient, SIGNAL(reportConnection(QString)), this, SLOT(changeConnectionStatus(QString)));
 
-    connect(this->ui->actionChange_IPv4, SIGNAL(triggered(bool)), this, SLOT(hello()));
+    connect(this->ui->actionChange_IPv4, SIGNAL(triggered(bool)), this, SLOT(showIPWindow()));
 
 
     //changement de direction
@@ -90,7 +104,7 @@ void MainWindow::changeConnectionStatus(QString status)
     }
 }
 
-void MainWindow::hello()
+void MainWindow::showIPWindow()
 {
     changeIP* ip = new changeIP(this);
     int accepted = ip->exec();
