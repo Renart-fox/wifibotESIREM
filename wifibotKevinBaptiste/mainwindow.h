@@ -25,6 +25,7 @@ private slots:
     void hello();
 
 
+
     void cameraConnection();
     void move_Rup();
     void move_Rback();
@@ -37,11 +38,12 @@ private slots:
 
 
 
-
 private:
     Ui::MainWindow *ui;
     TCPClient *tcpclient;
     UDPClient *udpclient;
+    QSet<int> pressedKey;
+    bool eventFilter(QObject *watched, QEvent *event);
 };
 
 #endif // MAINWINDOW_H

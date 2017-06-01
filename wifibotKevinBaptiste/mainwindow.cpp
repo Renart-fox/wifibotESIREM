@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QKeyEvent>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -11,6 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
     udpclient = new UDPClient();
     QString robotConnectionData = tcpclient->getRobotIP() + ":" + QString::number(tcpclient->getRobotPort());
     ui->robotIPPort->setText(robotConnectionData);
+
+    this->installEventFilter(this);
 
     initSignals();
 }
@@ -26,30 +29,19 @@ void MainWindow::initSignals()
 
     connect(this->ui->actionChange_IPv4, SIGNAL(triggered(bool)), this, SLOT(hello()));
 
-    //changement de direction du robot
+
+    //changement de direction
         connect(ui->button_up, SIGNAL (pressed()), this, SLOT (move_Rup()));
-        ui->button_up->setAutoRepeat(true);
+        connect(ui->button_up, SIGNAL(released()), this, SLOT (stop()));
 
         connect(ui->button_back, SIGNAL (pressed()), this, SLOT (move_Rback()));
-        ui->button_back->setAutoRepeat(true);
+        connect(ui->button_back, SIGNAL(released()), this, SLOT (stop()));
 
         connect(ui->button_right, SIGNAL (pressed()), this, SLOT (move_Rright()));
-        ui->button_right->setAutoRepeat(true);
+        connect(ui->button_right, SIGNAL(released()), this, SLOT (stop()));
 
         connect(ui->button_left, SIGNAL (pressed()), this, SLOT (move_Rleft()));
-        ui->button_left->setAutoRepeat(true);
-    //changement de direction de la camera
-        connect(ui->camera_up, SIGNAL (pressed()), this, SLOT (move_Cup()));
-        ui->camera_up->setAutoRepeat(true);
-
-        connect(ui->camera_down, SIGNAL (pressed()), this, SLOT (move_Cdown()));
-        ui->camera_down->setAutoRepeat(true);
-
-        connect(ui->camera_right, SIGNAL (pressed()), this, SLOT (move_Cright()));
-        ui->camera_right->setAutoRepeat(true);
-
-        connect(ui->camera_left, SIGNAL (pressed()), this, SLOT (move_Cleft()));
-        ui->camera_left->setAutoRepeat(true);
+        connect(ui->button_left, SIGNAL(released()), this, SLOT (stop()));
 
 }
 
@@ -112,22 +104,73 @@ void MainWindow::cameraConnection()
 //action robot
 void MainWindow::move_Rup()
 {
-   qDebug() << "up pressed";
+   this->tcpclient->move('u');
 }
 
 void MainWindow::move_Rback()
 {
-   qDebug() << "back pressed";
+   this->tcpclient->move('d');
 }
 
 void MainWindow::move_Rright()
 {
-   qDebug() << "right pressed";
+   this->tcpclient->move('r');
 }
 
 void MainWindow::move_Rleft()
 {
-   qDebug() << "left pressed";
+   this->tcpclient->move('l');
+}
+
+void MainWindow::stop()
+{
+    this->tcpclient->move('s');
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if(event->type()==QEvent::KeyPress)
+    {
+        pressedKey += ((QKeyEvent*)event)->key();
+        if(pressedKey.contains(Qt::Key_Z) && pressedKey.contains(Qt::Key_Q))
+        {
+            this->tcpclient->move('g');
+        }
+        else if(pressedKey.contains(Qt::Key_Z) && pressedKey.contains(Qt::Key_D))
+        {
+            this->tcpclient->move('h');
+        }
+        else if(pressedKey.contains(Qt::Key_Z))
+        {
+            this->tcpclient->move('u');
+        }
+        else if(pressedKey.contains(Qt::Key_S) && pressedKey.contains(Qt::Key_Q))
+        {
+            this->tcpclient->move('b');
+        }
+        else if(pressedKey.contains(Qt::Key_S) && pressedKey.contains(Qt::Key_D))
+        {
+            this->tcpclient->move('n');
+        }
+        else if(pressedKey.contains(Qt::Key_S))
+        {
+            this->tcpclient->move('d');
+        }
+        else if(pressedKey.contains(Qt::Key_D))
+        {
+            this->tcpclient->move('r');
+        }
+        else if(pressedKey.contains(Qt::Key_Q))
+        {
+            this->tcpclient->move('l');
+        }
+    }
+
+    if(event->type()==QEvent::KeyRelease)
+    {
+        pressedKey -= ((QKeyEvent*)event)->key();
+        stop();
+    }
 }
 //action camera
 
