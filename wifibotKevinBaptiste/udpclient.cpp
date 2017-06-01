@@ -4,25 +4,32 @@
 UDPClient::UDPClient(QString IP, int port)
 {
     setup(IP, port);
-    connect(udpsocket, SIGNAL(connected()), this, SLOT(connectionEstablished()));
-    connect(udpsocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()) );
+    connect(udpsocket, SIGNAL(hostFound()), this, SLOT(connectionEstablished()));
+    connect(udpsocket, SIGNAL(wconnected()), this, SLOT(connectionEstablished()));
+    connect(udpsocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
 }
 
 void UDPClient::setup(QString IP, int port)
 {
     this->wifibotIP = IP;
     this->wifibotPort = port;
-
     udpsocket = new QUdpSocket();
+
+}
+
+void UDPClient::connectToCam()
+{
     QHostAddress address = QHostAddress(this->wifibotIP);
-    udpsocket->bind(address, this->wifibotPort);
+    udpsocket->connectToHost(this->wifibotIP, this->wifibotPort);
+    if (udpsocket->waitForConnected(1000))
+        qDebug("Connected!");
 }
 
 void UDPClient::readPendingDatagrams(){
-    while (udpsocket->hasPendingDatagrams()) {
-        QNetworkDatagram datagram = udpsocket->receiveDatagram();
-        processTheDatagram(datagram);
-    }
+    qDebug()<<"lecture";
+    QByteArray Buffer;
+    Buffer.resize(udpsocket->pendingDatagramSize());
+
 }
 
 void UDPClient::connectionEstablished(){

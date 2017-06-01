@@ -25,12 +25,16 @@ private slots:
     void hello();
 
 
-    void cameraAction();
-    void mouve_up();
-    void mouve_back();
-    void mouve_left();
-    void mouve_right();
-    void stop();
+
+    void cameraConnection();
+    void move_Rup();
+    void move_Rback();
+    void move_Rleft();
+    void move_Rright();
+    void move_Cup();
+    void move_Cdown();
+    void move_Cleft();
+    void move_Cright();
 
 
 

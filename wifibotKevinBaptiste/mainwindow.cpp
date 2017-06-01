@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     tcpclient = new TCPClient();
+    //initialisation udp
+    udpclient = new UDPClient();
     QString robotConnectionData = tcpclient->getRobotIP() + ":" + QString::number(tcpclient->getRobotPort());
     ui->robotIPPort->setText(robotConnectionData);
 
@@ -18,25 +20,29 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::initSignals()
 {
+    //connection robot
     connect(ui->connectionButton, SIGNAL (released()), this, SLOT (pushAction()));
-    connect(ui->camera_button, SIGNAL (released()), this, SLOT (cameraAction()));
+    //connection cam
+    connect(ui->camera_button, SIGNAL (released()), this, SLOT (cameraConnection()));
 
     connect(this->tcpclient, SIGNAL(reportConnection(QString)), this, SLOT(changeConnectionStatus(QString)));
 
     connect(this->ui->actionChange_IPv4, SIGNAL(triggered(bool)), this, SLOT(hello()));
 
+
     //changement de direction
-        connect(ui->button_up, SIGNAL (pressed()), this, SLOT (mouve_up()));
+        connect(ui->button_up, SIGNAL (pressed()), this, SLOT (move_Rup()));
         connect(ui->button_up, SIGNAL(released()), this, SLOT (stop()));
 
-        connect(ui->button_back, SIGNAL (pressed()), this, SLOT (mouve_back()));
+        connect(ui->button_back, SIGNAL (pressed()), this, SLOT (move_Rback()));
         connect(ui->button_back, SIGNAL(released()), this, SLOT (stop()));
 
-        connect(ui->button_right, SIGNAL (pressed()), this, SLOT (mouve_right()));
+        connect(ui->button_right, SIGNAL (pressed()), this, SLOT (move_Rright()));
         connect(ui->button_right, SIGNAL(released()), this, SLOT (stop()));
 
-        connect(ui->button_left, SIGNAL (pressed()), this, SLOT (mouve_left()));
+        connect(ui->button_left, SIGNAL (pressed()), this, SLOT (move_Rleft()));
         connect(ui->button_left, SIGNAL(released()), this, SLOT (stop()));
+
 }
 
 MainWindow::~MainWindow()
@@ -87,28 +93,31 @@ void MainWindow::hello()
 }
 
 
-void MainWindow::cameraAction()
+void MainWindow::cameraConnection()
 {
     qDebug()<<"start cam";
+
+    udpclient->connectToCam();
+
 }
 
-
-void MainWindow::mouve_up()
+//action robot
+void MainWindow::move_Rup()
 {
    this->tcpclient->move('u');
 }
 
-void MainWindow::mouve_back()
+void MainWindow::move_Rback()
 {
    this->tcpclient->move('d');
 }
 
-void MainWindow::mouve_right()
+void MainWindow::move_Rright()
 {
    this->tcpclient->move('r');
 }
 
-void MainWindow::mouve_left()
+void MainWindow::move_Rleft()
 {
    this->tcpclient->move('l');
 }
@@ -162,4 +171,25 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         pressedKey -= ((QKeyEvent*)event)->key();
         stop();
     }
+}
+//action camera
+
+void MainWindow::move_Cup()
+{
+   qDebug() << "Camera up";
+}
+
+void MainWindow::move_Cdown()
+{
+   qDebug() << "Camera down";
+}
+
+void MainWindow::move_Cright()
+{
+   qDebug() << "Camera right";
+}
+
+void MainWindow::move_Cleft()
+{
+   qDebug() << "Camera left";
 }
