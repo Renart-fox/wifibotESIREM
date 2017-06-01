@@ -35,6 +35,7 @@ private slots:
     void move_Cdown();
     void move_Cleft();
     void move_Cright();
+    void stop();
 
 
 
