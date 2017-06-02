@@ -8,8 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     tcpclient = new TCPClient();
-    //initialisation udp
-    udpclient = new UDPClient();
+    camera = new TCPCam();
+
     QString robotConnectionData = tcpclient->getRobotIP() + ":" + QString::number(tcpclient->getRobotPort());
     ui->robotIPPort->setText(robotConnectionData);
 
@@ -36,15 +36,13 @@ void MainWindow::initSignals()
 {
     //connection robot
     connect(ui->connectionButton, SIGNAL (released()), this, SLOT (pushAction()));
-    //connection cam
-    connect(ui->camera_button, SIGNAL (released()), this, SLOT (cameraConnection()));
 
     connect(this->tcpclient, SIGNAL(reportConnection(QString)), this, SLOT(changeConnectionStatus(QString)));
 
     connect(this->ui->actionChange_IPv4, SIGNAL(triggered(bool)), this, SLOT(showIPWindow()));
 
 
-    //changement de direction
+    //Direction robot
         connect(ui->button_up, SIGNAL (pressed()), this, SLOT (move_Rup()));
         connect(ui->button_up, SIGNAL(released()), this, SLOT (stop()));
 
@@ -69,6 +67,18 @@ void MainWindow::initSignals()
         connect(ui->button_dr, SIGNAL (pressed()), this, SLOT (move_Rdr()));
         connect(ui->button_dr, SIGNAL(released()), this, SLOT (stop()));
 
+     //Direction camera
+        connect(ui->camera_up, SIGNAL (pressed()), this, SLOT (move_Cup()));
+        ui->camera_up->setAutoRepeat(true);
+
+        connect(ui->camera_down, SIGNAL (pressed()), this, SLOT (move_Cdown()));
+        ui->camera_down->setAutoRepeat(true);
+
+        connect(ui->camera_right, SIGNAL (pressed()), this, SLOT (move_Cright()));
+        ui->camera_right->setAutoRepeat(true);
+
+        connect(ui->camera_left, SIGNAL (pressed()), this, SLOT (move_Cleft()));
+        ui->camera_left->setAutoRepeat(true);
 }
 
 MainWindow::~MainWindow()
@@ -116,15 +126,6 @@ void MainWindow::showIPWindow()
     }
     ip = NULL;
     free(ip);
-}
-
-
-void MainWindow::cameraConnection()
-{
-    qDebug()<<"start cam";
-
-    udpclient->connectToCam();
-
 }
 
 //action robot
@@ -213,28 +214,29 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 
     if(event->type()==QEvent::KeyRelease)
     {
+        int releasedKey = ((QKeyEvent*)event)->key();
+        if(releasedKey==Qt::Key_Z || releasedKey==Qt::Key_Q || releasedKey==Qt::Key_S || releasedKey==Qt::Key_D) stop();
         pressedKey -= ((QKeyEvent*)event)->key();
-        stop();
     }
 }
 //action camera
 
 void MainWindow::move_Cup()
 {
-   qDebug() << "Camera up";
+   camera->moveCam('u');
 }
 
 void MainWindow::move_Cdown()
 {
-   qDebug() << "Camera down";
+   camera->moveCam('d');
 }
 
 void MainWindow::move_Cright()
 {
-   qDebug() << "Camera right";
+   camera->moveCam('r');
 }
 
 void MainWindow::move_Cleft()
 {
-   qDebug() << "Camera left";
+   camera->moveCam('l');
 }

@@ -20,14 +20,14 @@ SOURCES += main.cpp\
     tcpclient.cpp \
     error.cpp \
     changeip.cpp \
-    udpclient.cpp
+    tcpcam.cpp
 
 HEADERS  += mainwindow.h \
     tcpclient.h \
     error.h \
     changeip.h \
-    udpclient.h \
-    networkingopt.h
+    networkingopt.h \
+    tcpcam.h
 
 FORMS    += mainwindow.ui \
     error.ui \

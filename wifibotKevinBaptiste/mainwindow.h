@@ -6,8 +6,8 @@
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include <QUrl>
+#include "tcpcam.h"
 #include "tcpclient.h"
-#include "udpclient.h"
 #include "error.h"
 #include "changeip.h"
 
@@ -29,8 +29,6 @@ private slots:
     void showIPWindow();
 
 
-
-    void cameraConnection();
     void move_Rup();
     void move_Rback();
     void move_Rleft();
@@ -50,7 +48,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     TCPClient *tcpclient;
-    UDPClient *udpclient;
+    TCPCam *camera;
     QSet<int> pressedKey;
     bool eventFilter(QObject *watched, QEvent *event);
 };
