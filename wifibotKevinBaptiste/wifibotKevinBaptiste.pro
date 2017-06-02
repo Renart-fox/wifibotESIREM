@@ -7,7 +7,7 @@
 QT       += core gui
 QT += network
 QMAKE_CXXFLAGS += -std=c++11
-QT += multimediawidgets
+QT += webenginewidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,3 +32,8 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     error.ui \
     changeip.ui
+
+RESOURCES += \
+    resources.qrc
+
+DISTFILES +=

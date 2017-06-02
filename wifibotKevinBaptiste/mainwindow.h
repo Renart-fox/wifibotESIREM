@@ -2,10 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QVideoWidget>
-#include <QMediaPlayer>
-#include <QMediaPlaylist>
 #include <QUrl>
+#include <QWebEngineView>
 #include "tcpcam.h"
 #include "tcpclient.h"
 #include "error.h"
@@ -41,6 +39,8 @@ private slots:
     void move_Cdown();
     void move_Cleft();
     void move_Cright();
+    void resetVer();
+    void resetHor();
     void stop();
 
 

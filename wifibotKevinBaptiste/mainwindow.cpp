@@ -17,19 +17,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initSignals();
 
-    QVideoWidget* videoWidget = new QVideoWidget();
-    videoWidget->setStyleSheet("background-color: black;");
-    this->ui->videoContainer->addWidget(videoWidget,0,0,0,0);
-    videoWidget->setFullScreen(false);
-    QMediaPlaylist* playlist = new QMediaPlaylist();
-    playlist->addMedia(QUrl("192.168.1.106:8080"));
-    QNetworkRequest* req = new QNetworkRequest(QUrl("192.168.1.106:8080"));
-    playlist->setCurrentIndex(1);
-    QMediaPlayer* player = new QMediaPlayer(playlist);
-    player->setVideoOutput(videoWidget);
-    videoWidget->show();
+    QWebEngineView* videoStream = new QWebEngineView();
+    this->ui->videoContainer->addWidget(videoStream);
 
-    player->play();
+    videoStream->load(QUrl("http://192.168.1.106:8080/?action=stream"));
+    videoStream->show();
+
+    this->setCursor(QCursor(QPixmap("zzs")));
 }
 
 void MainWindow::initSignals()
@@ -79,6 +73,9 @@ void MainWindow::initSignals()
 
         connect(ui->camera_left, SIGNAL (pressed()), this, SLOT (move_Cleft()));
         ui->camera_left->setAutoRepeat(true);
+
+        connect(ui->camera_resetH, SIGNAL (pressed()), this, SLOT (resetHor()));
+        connect(ui->camera_resetV, SIGNAL (pressed()), this, SLOT (resetVer()));
 }
 
 MainWindow::~MainWindow()
@@ -239,4 +236,14 @@ void MainWindow::move_Cright()
 void MainWindow::move_Cleft()
 {
    camera->moveCam('l');
+}
+
+void MainWindow::resetHor()
+{
+    camera->moveCam('h');
+}
+
+void MainWindow::resetVer()
+{
+    camera->moveCam('v');
 }

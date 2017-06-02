@@ -43,6 +43,16 @@ void TCPCam::moveCam(char dirCam)
                 query.setUrl(url);
                 manager->get(query);
                 break;
+            case 'h':
+                url = QUrl("http://192.168.1.106:8080/?action=command&dest=0&plugin=0&id=10094854&group=1&value=1"); //On récupère l'URL entrée par l'utilisateur.
+                query.setUrl(url);
+                manager->get(query);
+                break;
+            case 'v':
+                url = QUrl("http://192.168.1.106:8080/?action=command&dest=0&plugin=0&id=10094855&group=1&value=1"); //On récupère l'URL entrée par l'utilisateur.
+                query.setUrl(url);
+                manager->get(query);
+                break;
     }
 }
 
