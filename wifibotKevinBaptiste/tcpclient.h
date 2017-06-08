@@ -25,13 +25,15 @@ public:
 
     void setNewIP(QString ip);
 
-    void move(char dir, int speed);
+    void move(char dir);
 
     void connectToBot();
     void disconnectFromBot();
 signals:
     void reportConnection(QString status);
     void signalBat(int valB);
+    void signalInfAD(int iad);
+    void signalInfAG(int iag);
 private:
     void setup(QString IP, int port);
     QTimer* timer;

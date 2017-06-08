@@ -72,6 +72,11 @@ void MainWindow::initSignals()
         connect(ui->camera_resetV, SIGNAL (pressed()), this, SLOT (resetVer()));
 
         connect(this->tcpclient, SIGNAL (signalBat(int)), this, SLOT (setBat(int)));
+
+        //infrarouge
+        connect(this->tcpclient, SIGNAL (signalInfAD(int)), this, SLOT (setInfAD(int)));
+        connect(this->tcpclient, SIGNAL (signalInfAG(int)), this, SLOT (setInfAG(int)));
+
 }
 
 MainWindow::~MainWindow()
@@ -124,46 +129,46 @@ void MainWindow::showIPWindow()
 //action robot
 void MainWindow::move_Rup()
 {
-   this->tcpclient->move('u', speed);
+   this->tcpclient->move('u');
 }
 
 void MainWindow::move_Rback()
 {
-   this->tcpclient->move('d', speed);
+   this->tcpclient->move('d');
 }
 
 void MainWindow::move_Rright()
 {
-   this->tcpclient->move('r', speed);
+   this->tcpclient->move('r');
 }
 
 void MainWindow::move_Rleft()
 {
-   this->tcpclient->move('l', speed);
+   this->tcpclient->move('l');
 }
 
 void MainWindow::move_Rul()
 {
-   this->tcpclient->move('g', speed);
+   this->tcpclient->move('g');
 }
 
 void MainWindow::move_Rur()
 {
-   this->tcpclient->move('h', speed);
+   this->tcpclient->move('h');
 }
 
 void MainWindow::move_Rdl()
 {
-   this->tcpclient->move('b', speed);
+   this->tcpclient->move('b');
 }
 
 void MainWindow::move_Rdr()
 {
-   this->tcpclient->move('n', speed);
+   this->tcpclient->move('n');
 }
 void MainWindow::stop()
 {
-    this->tcpclient->move('s', speed);
+    this->tcpclient->move('s');
 }
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
@@ -173,35 +178,35 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         pressedKey += ((QKeyEvent*)event)->key();
         if(pressedKey.contains(Qt::Key_Z) && pressedKey.contains(Qt::Key_Q))
         {
-            move_Rul();
+            this->tcpclient->move('g');
         }
         else if(pressedKey.contains(Qt::Key_Z) && pressedKey.contains(Qt::Key_D))
         {
-            move_Rur();
+            this->tcpclient->move('h');
         }
         else if(pressedKey.contains(Qt::Key_Z))
         {
-            move_Rup();
+            this->tcpclient->move('u');
         }
         else if(pressedKey.contains(Qt::Key_S) && pressedKey.contains(Qt::Key_Q))
         {
-            move_Rdl();
+            this->tcpclient->move('b');
         }
         else if(pressedKey.contains(Qt::Key_S) && pressedKey.contains(Qt::Key_D))
         {
-            move_Rdr();
+            this->tcpclient->move('n');
         }
         else if(pressedKey.contains(Qt::Key_S))
         {
-            move_Rback();
+            this->tcpclient->move('d');
         }
         else if(pressedKey.contains(Qt::Key_D))
         {
-            move_Rright();
+            this->tcpclient->move('r');
         }
         else if(pressedKey.contains(Qt::Key_Q))
         {
-            move_Rleft();
+            this->tcpclient->move('l');
         }
     }
 
@@ -249,18 +254,45 @@ void MainWindow::loadCam()
     QWebEngineView* videoStream = new QWebEngineView();
     this->ui->videoContainer->addWidget(videoStream);
 
-    videoStream->load(QUrl("http://"+this->tcpclient->getRobotIP()+":8080/?action=stream"));
+    videoStream->load(QUrl("http://192.168.1.106:8080/?action=stream"));
     videoStream->show();
 }
 
 void MainWindow::setBat(int bat)
 {
-    /*QString str= QString::number(bat);
-    ui->Bat->setText("Bat :" + str);*/
+    float batf=(float)bat/10;
+    //max bat 12,8 min bat 11,7
+    float y=batf-11.7;
+    int value = (int)((y/1.1)*100);
+    QString str= QString::number(value);
+    //QString str= QString::number(batf);
+
+    if (batf>18.0){
+        ui->Bat->setText("Bat : CHARGING");
+        ui->progressBar->setValue(100);
+        ui->progressBar->setStyleSheet("QProgressBar::chunk {background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,stop: 0 #98fb00,stop: 0.4999 #adff2f,stop: 0.5 #b7ff49,stop: 1 #c1ff63 );border: 1px solid green;}");
+    }
+
+    else{
+        ui->Bat->setText("Bat : "+str);
+        ui->progressBar->setValue(value);
+        if(value<20) ui->progressBar->setStyleSheet("QProgressBar::chunk {background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,stop: 0 #FF0350,stop: 0.4999 #FF0020,stop: 0.5 #FF0019,stop: 1 #FF0000 );border: 1px solid black;}");
+        else{
+             ui->progressBar->setStyleSheet("QProgressBar::chunk {background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,stop: 0 #0080ff,stop: 0.4999 #1a8dff,stop: 0.5 #349aff,stop: 1 #4ea7ff );border: 1px solid black;}");
+        }
+    }
 }
 
-void MainWindow::on_horizontalSlider_sliderReleased()
+void MainWindow::setInfAD(int infAD)
 {
-    this->speed = this->ui->horizontalSlider->value();
-    std::cout << speed << std::endl;
+    QString str= QString::number(infAD);
+    ui->infD->setText("infD :" + str);
+
+}
+
+void MainWindow::setInfAG(int infAG)
+{
+
+    QString str= QString::number(infAG);
+    ui->infG->setText("infG :" + str);
 }
