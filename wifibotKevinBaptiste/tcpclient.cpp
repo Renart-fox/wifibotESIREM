@@ -50,6 +50,8 @@ void TCPClient::getData()
     }
     std::cout << std::endl;
     emit signalBat(frame[2]);
+    emit signalInfAG(frame[3]);
+    emit signalInfAD(frame[11]);
 }
 
 void TCPClient::connectToBot()

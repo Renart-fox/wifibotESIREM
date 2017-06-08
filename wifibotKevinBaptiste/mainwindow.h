@@ -45,6 +45,8 @@ private slots:
 
     void loadCam();
     void setBat(int bat);
+    void setInfAD(int infAD);
+    void setInfAG(int infAG);
 
     void on_horizontalSlider_sliderReleased();
 

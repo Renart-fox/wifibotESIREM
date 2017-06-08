@@ -72,6 +72,11 @@ void MainWindow::initSignals()
         connect(ui->camera_resetV, SIGNAL (pressed()), this, SLOT (resetVer()));
 
         connect(this->tcpclient, SIGNAL (signalBat(int)), this, SLOT (setBat(int)));
+
+        //infrarouge
+        connect(this->tcpclient, SIGNAL (signalInfAD(int)), this, SLOT (setInfAD(int)));
+        connect(this->tcpclient, SIGNAL (signalInfAG(int)), this, SLOT (setInfAG(int)));
+
 }
 
 MainWindow::~MainWindow()
@@ -253,14 +258,47 @@ void MainWindow::loadCam()
     videoStream->show();
 }
 
-void MainWindow::setBat(int bat)
-{
-    /*QString str= QString::number(bat);
-    ui->Bat->setText("Bat :" + str);*/
-}
-
 void MainWindow::on_horizontalSlider_sliderReleased()
 {
     this->speed = this->ui->horizontalSlider->value();
     std::cout << speed << std::endl;
+}
+
+void setBat(int bat)
+{
+    float batf=(float)bat/10;
+    //max bat 12,8 min bat 11,7
+    float y=batf-11.7;
+    int value = (int)((y/1.1)*100);
+    QString str= QString::number(value);
+    //QString str= QString::number(batf);
+
+    if (batf>18.0){
+        ui->Bat->setText("Bat : CHARGING");
+        ui->progressBar->setValue(100);
+        ui->progressBar->setStyleSheet("QProgressBar::chunk {background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,stop: 0 #98fb00,stop: 0.4999 #adff2f,stop: 0.5 #b7ff49,stop: 1 #c1ff63 );border: 1px solid green;}");
+    }
+
+    else{
+        ui->Bat->setText("Bat : "+str);
+        ui->progressBar->setValue(value);
+        if(value<20) ui->progressBar->setStyleSheet("QProgressBar::chunk {background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,stop: 0 #FF0350,stop: 0.4999 #FF0020,stop: 0.5 #FF0019,stop: 1 #FF0000 );border: 1px solid black;}");
+        else{
+             ui->progressBar->setStyleSheet("QProgressBar::chunk {background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,stop: 0 #0080ff,stop: 0.4999 #1a8dff,stop: 0.5 #349aff,stop: 1 #4ea7ff );border: 1px solid black;}");
+        }
+    }
+}
+
+void MainWindow::setInfAD(int infAD)
+{
+    QString str= QString::number(infAD);
+    ui->infD->setText("infD :" + str);
+
+}
+
+void MainWindow::setInfAG(int infAG)
+{
+
+    QString str= QString::number(infAG);
+    ui->infG->setText("infG :" + str);
 }

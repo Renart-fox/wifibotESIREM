@@ -32,6 +32,8 @@ public:
 signals:
     void reportConnection(QString status);
     void signalBat(int valB);
+    void signalInfAD(int iad);
+    void signalInfAG(int iag);
 private:
     void setup(QString IP, int port);
     QTimer* timer;
