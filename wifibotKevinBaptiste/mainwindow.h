@@ -45,8 +45,8 @@ private slots:
 
     void loadCam();
     void setBat(int bat);
-
-    void on_horizontalSlider_sliderReleased();
+    void setInfAD(int infAD);
+    void setInfAG(int infAG);
 
 private:
     Ui::MainWindow *ui;
@@ -54,7 +54,6 @@ private:
     TCPCam *camera;
     QSet<int> pressedKey;
     bool eventFilter(QObject *watched, QEvent *event);
-    int speed = 70;
 };
 
 #endif // MAINWINDOW_H
