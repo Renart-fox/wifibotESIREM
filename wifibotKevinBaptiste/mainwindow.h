@@ -43,7 +43,7 @@ private slots:
     void resetHor();
     void stop();
 
-
+    void loadCam();
 
 private:
     Ui::MainWindow *ui;

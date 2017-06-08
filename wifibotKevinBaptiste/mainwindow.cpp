@@ -17,13 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initSignals();
 
-    QWebEngineView* videoStream = new QWebEngineView();
-    this->ui->videoContainer->addWidget(videoStream);
-
-    videoStream->load(QUrl("http://192.168.1.106:8080/?action=stream"));
-    videoStream->show();
-
-    this->setCursor(QCursor(QPixmap("zzs")));
+    loadCam();
 }
 
 void MainWindow::initSignals()
@@ -246,4 +240,13 @@ void MainWindow::resetHor()
 void MainWindow::resetVer()
 {
     camera->moveCam('v');
+}
+
+void MainWindow::loadCam()
+{
+    QWebEngineView* videoStream = new QWebEngineView();
+    this->ui->videoContainer->addWidget(videoStream);
+
+    videoStream->load(QUrl("http://192.168.1.106:8080/?action=stream"));
+    videoStream->show();
 }
