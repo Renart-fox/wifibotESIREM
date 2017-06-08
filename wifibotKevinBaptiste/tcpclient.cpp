@@ -49,6 +49,7 @@ void TCPClient::getData()
         toDec = 0;
     }
     std::cout << std::endl;
+    emit signalBat(donnes.at(2));
 }
 
 void TCPClient::connectToBot()

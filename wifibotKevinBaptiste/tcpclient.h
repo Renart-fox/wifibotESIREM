@@ -31,6 +31,7 @@ public:
     void disconnectFromBot();
 signals:
     void reportConnection(QString status);
+    void signalBat(int valB);
 private:
     void setup(QString IP, int port);
     QTimer* timer;

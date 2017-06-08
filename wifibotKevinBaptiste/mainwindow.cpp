@@ -70,6 +70,8 @@ void MainWindow::initSignals()
 
         connect(ui->camera_resetH, SIGNAL (pressed()), this, SLOT (resetHor()));
         connect(ui->camera_resetV, SIGNAL (pressed()), this, SLOT (resetVer()));
+
+        connect(this->tcpclient, SIGNAL (signalBat(int)), this, SLOT (setBat(int)));
 }
 
 MainWindow::~MainWindow()
@@ -249,4 +251,10 @@ void MainWindow::loadCam()
 
     videoStream->load(QUrl("http://192.168.1.106:8080/?action=stream"));
     videoStream->show();
+}
+
+void MainWindow::setBat(int bat)
+{
+    QString str= QString::number(bat);
+    ui->Bat->setText("Bat :" + str);
 }

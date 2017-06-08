@@ -44,6 +44,7 @@ private slots:
     void stop();
 
     void loadCam();
+    void setBat(int bat);
 
 private:
     Ui::MainWindow *ui;
