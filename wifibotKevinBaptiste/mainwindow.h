@@ -46,12 +46,18 @@ private slots:
     void loadCam();
     void setBat(int bat);
 
+    void on_horizontalSlider_sliderReleased();
+
+    void on_pushButton_clicked(bool checked);
+
 private:
     Ui::MainWindow *ui;
     TCPClient *tcpclient;
     TCPCam *camera;
     QSet<int> pressedKey;
     bool eventFilter(QObject *watched, QEvent *event);
+    int speed = 70;
+    QWebEngineView* videoStream;
 };
 
 #endif // MAINWINDOW_H

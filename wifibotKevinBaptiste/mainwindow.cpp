@@ -124,46 +124,46 @@ void MainWindow::showIPWindow()
 //action robot
 void MainWindow::move_Rup()
 {
-   this->tcpclient->move('u');
+   this->tcpclient->move('u', speed);
 }
 
 void MainWindow::move_Rback()
 {
-   this->tcpclient->move('d');
+   this->tcpclient->move('d', speed);
 }
 
 void MainWindow::move_Rright()
 {
-   this->tcpclient->move('r');
+   this->tcpclient->move('r', speed);
 }
 
 void MainWindow::move_Rleft()
 {
-   this->tcpclient->move('l');
+   this->tcpclient->move('l', speed);
 }
 
 void MainWindow::move_Rul()
 {
-   this->tcpclient->move('g');
+   this->tcpclient->move('g', speed);
 }
 
 void MainWindow::move_Rur()
 {
-   this->tcpclient->move('h');
+   this->tcpclient->move('h', speed);
 }
 
 void MainWindow::move_Rdl()
 {
-   this->tcpclient->move('b');
+   this->tcpclient->move('b', speed);
 }
 
 void MainWindow::move_Rdr()
 {
-   this->tcpclient->move('n');
+   this->tcpclient->move('n', speed);
 }
 void MainWindow::stop()
 {
-    this->tcpclient->move('s');
+    this->tcpclient->move('s', speed);
 }
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
@@ -173,35 +173,35 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         pressedKey += ((QKeyEvent*)event)->key();
         if(pressedKey.contains(Qt::Key_Z) && pressedKey.contains(Qt::Key_Q))
         {
-            this->tcpclient->move('g');
+            move_Rul();
         }
         else if(pressedKey.contains(Qt::Key_Z) && pressedKey.contains(Qt::Key_D))
         {
-            this->tcpclient->move('h');
+            move_Rur();
         }
         else if(pressedKey.contains(Qt::Key_Z))
         {
-            this->tcpclient->move('u');
+            move_Rup();
         }
         else if(pressedKey.contains(Qt::Key_S) && pressedKey.contains(Qt::Key_Q))
         {
-            this->tcpclient->move('b');
+            move_Rdl();
         }
         else if(pressedKey.contains(Qt::Key_S) && pressedKey.contains(Qt::Key_D))
         {
-            this->tcpclient->move('n');
+            move_Rdr();
         }
         else if(pressedKey.contains(Qt::Key_S))
         {
-            this->tcpclient->move('d');
+            move_Rback();
         }
         else if(pressedKey.contains(Qt::Key_D))
         {
-            this->tcpclient->move('r');
+            move_Rright();
         }
         else if(pressedKey.contains(Qt::Key_Q))
         {
-            this->tcpclient->move('l');
+            move_Rleft();
         }
     }
 
@@ -246,15 +246,21 @@ void MainWindow::resetVer()
 
 void MainWindow::loadCam()
 {
-    QWebEngineView* videoStream = new QWebEngineView();
+    videoStream = new QWebEngineView();
     this->ui->videoContainer->addWidget(videoStream);
 
-    videoStream->load(QUrl("http://192.168.1.106:8080/?action=stream"));
+    videoStream->load(QUrl("http://"+this->tcpclient->getRobotIP()+":8080/?action=stream"));
     videoStream->show();
 }
 
 void MainWindow::setBat(int bat)
 {
-    QString str= QString::number(bat);
-    ui->Bat->setText("Bat :" + str);
+    /*QString str= QString::number(bat);
+    ui->Bat->setText("Bat :" + str);*/
+}
+
+void MainWindow::on_horizontalSlider_sliderReleased()
+{
+    this->speed = this->ui->horizontalSlider->value();
+    std::cout << speed << std::endl;
 }

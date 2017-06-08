@@ -25,7 +25,7 @@ public:
 
     void setNewIP(QString ip);
 
-    void move(char dir);
+    void move(char dir, int speed);
 
     void connectToBot();
     void disconnectFromBot();

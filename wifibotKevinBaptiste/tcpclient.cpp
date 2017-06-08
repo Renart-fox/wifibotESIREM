@@ -49,7 +49,7 @@ void TCPClient::getData()
         toDec = 0;
     }
     std::cout << std::endl;
-    emit signalBat(donnes.at(2));
+    emit signalBat(frame[2]);
 }
 
 void TCPClient::connectToBot()
@@ -112,7 +112,7 @@ void TCPClient::synchroniseBot()
     this->socket->write(data);
 }
 
-void TCPClient::move(char dir)
+void TCPClient::move(char dir, int vitesse)
 {
     if(this->isConnected)
     {
@@ -125,51 +125,51 @@ void TCPClient::move(char dir)
             data.append(0x07);
             switch(dir)
             {
-                case 'u': data.append((char)0xf0);
+                case 'u': data.append((char)((int)(240*vitesse)/100));
                         data.append((char)0x00);
-                        data.append((char)0xf0);
+                        data.append((char)((int)(240*vitesse)/100));
                         data.append((char)0x00);
                         data.append((char)0x50);
                     break;
-                case 'd': data.append((char)0xf0);
+                case 'd': data.append((char)((int)(240*vitesse)/100));
                         data.append((char)0x00);
-                        data.append((char)0xf0);
+                        data.append((char)((int)(240*vitesse)/100));
                         data.append((char)0x00);
                         data.append((char)0x10);
                     break;
-                case 'l': data.append((char)0x60);
+                case 'l': data.append((char)((int)(96*vitesse)/100));
                         data.append((char)0x00);
-                        data.append((char)0xf0);
+                        data.append((char)((int)(240*vitesse)/100));
                         data.append((char)0x00);
                         data.append((char)0x50);
                     break;
-                case 'r': data.append((char)0xf0);
+                case 'r': data.append((char)((int)(240*vitesse)/100));
                         data.append((char)0x00);
-                        data.append((char)0x60);
+                        data.append((char)((int)(150*vitesse)/100));
                         data.append((char)0x00);
                         data.append((char)0x50);
                     break;
                 case 'g': data.append((char)0x78);
                         data.append((char)0x00);
-                        data.append((char)0xf0);
+                        data.append((char)((int)(240*vitesse)/100));
                         data.append((char)0x00);
                         data.append((char)0x50);
                     break;
-                case 'h': data.append((char)0xf0);
+                case 'h': data.append((char)((int)(240*vitesse)/100));
                         data.append((char)0x00);
-                        data.append((char)0x78);
+                        data.append(0x78);
                         data.append((char)0x00);
                         data.append((char)0x50);
                     break;
-                case 'b': data.append((char)0x78);
+                case 'b': data.append(0x78);
                         data.append((char)0x00);
-                        data.append((char)0xf0);
+                        data.append((char)((int)(240*vitesse)/100));
                         data.append((char)0x00);
                         data.append((char)0x00);
                     break;
-                case 'n': data.append((char)0xf0);
+                case 'n': data.append((char)((int)(240*vitesse)/100));
                         data.append((char)0x00);
-                        data.append((char)0x78);
+                        data.append(0x78);
                         data.append((char)0x00);
                         data.append((char)0x00);
                     break;
