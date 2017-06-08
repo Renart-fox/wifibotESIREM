@@ -33,7 +33,6 @@ FORMS    += mainwindow.ui \
     error.ui \
     changeip.ui
 
-RESOURCES += \
-    resources.qrc
+RESOURCES +=
 
 DISTFILES +=

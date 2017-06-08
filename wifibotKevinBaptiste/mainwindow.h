@@ -42,9 +42,21 @@ private slots:
     void resetVer();
     void resetHor();
     void stop();
+    void setInfAD(int infAD);
+    void setInfAG(int infAG);
 
     void loadCam();
     void setBat(int bat);
+
+    void on_horizontalSlider_sliderReleased();
+
+    void on_blurBox_stateChanged(int arg1);
+
+    void on_negaBox_stateChanged(int arg1);
+
+    void on_hueBox_stateChanged(int arg1);
+
+    void on_grayBox_stateChanged(int arg1);
 
 private:
     Ui::MainWindow *ui;
@@ -52,6 +64,14 @@ private:
     TCPCam *camera;
     QSet<int> pressedKey;
     bool eventFilter(QObject *watched, QEvent *event);
+    int speed = 70;
+    QWebEngineView* videoStream;
+    bool isBlurred = false;
+    bool isNega = false;
+    bool isInverted = false;
+    bool isGray = false;
+
+    QString getCurrentFilters();
 };
 
 #endif // MAINWINDOW_H
