@@ -31,10 +31,10 @@ void TCPClient::getData()
         for(int j=7; j>=0; j--)
         {
             readableData[7-j+i*8] = ((b >> j) & 1) ? 1 : 0;
-            std::cout << readableData[7-j+i*8];
+            //std::cout << readableData[7-j+i*8];
         }
     }
-    std::cout << std::endl;
+    //std::cout << std::endl;
 
     int toDec = 0;
     int frame[20];
@@ -45,13 +45,32 @@ void TCPClient::getData()
             toDec += readableData[i+j] * pow(2, 7-j);
         }
         frame[i/8] = toDec;
-        std::cout << frame[i/8] << " ";
+        //std::cout << frame[i/8] << " ";
         toDec = 0;
     }
-    std::cout << std::endl;
+    //std::cout << std::endl;
     emit signalBat(frame[2]);
     emit signalInfAG(frame[3]);
     emit signalInfAD(frame[11]);
+    if(frame[3] >= 140 || frame[11] >= 140)
+    {
+        if(!bloque)
+        {
+            move('s',0);
+            esquive();
+            bloque = true;
+            std::cout << "stop" << std::endl;
+        }
+    }
+    else
+    {
+        if(bloque)
+        {
+            move('s',0);
+            bloque = false;
+            std::cout << "arret bloquage" << std::endl;
+        }
+    }
 }
 
 void TCPClient::connectToBot()
@@ -118,7 +137,7 @@ void TCPClient::move(char dir, int vitesse)
 {
     if(this->isConnected)
     {
-        if(dir != lastDirection)
+        if((dir != lastDirection && !bloque ) || (dir=='s'))
         {
             lastDirection = dir;
 
@@ -207,4 +226,21 @@ void TCPClient::move(char dir, int vitesse)
 void TCPClient::setNewIP(QString ip)
 {
     this->wifibotIP=ip;
+}
+
+void TCPClient::esquive()
+{
+        QByteArray data;
+        data.append(255);
+        data.append(0x07);
+        data.append((char)0xf0);
+        data.append((char)0x00);
+        data.append((char)0xf0);
+        data.append((char)0x00);
+        data.append((char)0x10);
+        qint16 crc = NETWORKINGOPT::crc16(data);
+        data.append((char)crc);
+        data.append((char)(crc >> 8));
+
+        this->socket->write(data);
 }

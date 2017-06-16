@@ -42,6 +42,8 @@ private:
     QTcpSocket *socket;
     bool isConnected = false;
     char lastDirection = 'n';
+    bool bloque = false;
+    void esquive();
 private slots:
     void connectionEstablished();
     void getData();

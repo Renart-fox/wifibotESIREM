@@ -8,6 +8,8 @@
 #include "tcpclient.h"
 #include "error.h"
 #include "changeip.h"
+#include <QClipboard>
+#include <QFileDialog>
 
 namespace Ui {
 class MainWindow;
@@ -58,6 +60,8 @@ private slots:
 
     void on_grayBox_stateChanged(int arg1);
 
+    void on_downloadButton_clicked(bool checked);
+
 private:
     Ui::MainWindow *ui;
     TCPClient *tcpclient;
@@ -70,6 +74,7 @@ private:
     bool isNega = false;
     bool isInverted = false;
     bool isGray = false;
+    bool bloque = false;
 
     QString getCurrentFilters();
 };

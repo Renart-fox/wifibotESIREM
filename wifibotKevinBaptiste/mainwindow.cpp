@@ -377,3 +377,14 @@ QString MainWindow::getCurrentFilters()
     if(isInverted) str += "hue-rotate(90deg) ";
     return str;
 }
+
+void MainWindow::on_downloadButton_clicked(bool checked)
+{
+    videoStream->triggerPageAction(QWebEnginePage::WebAction::Copy);
+    QClipboard* clipboard = QGuiApplication::clipboard();
+    QImage image = clipboard->image(QClipboard::Clipboard);
+    if(!image.isNull()){
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "./", tr("Images (*.jpg)"));
+        image.save(fileName);
+    }
+}
